@@ -18,4 +18,4 @@ RUN apk add --no-cache --update wget && \
     apk del --purge wget && \
     rm -rf /var/cache/apk/*
 
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/bin/scala"]

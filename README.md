@@ -8,7 +8,15 @@ I would guarantee tags for the latest and the previous patch release in a minor 
 
 ## Usage
 
-You can run the Scala REPL using.
+You can run the REPL for the _latest_ Scala version using.
 ```
-docker run --rm -it aa8y/scala:latest scala
+docker run --rm -it aa8y/scala
+```
+For an older/specific version use.
+```
+docker run --rm -it aa8y/scala:2.11.11
+```
+For running an interactive shell within the container, use this command and specify the required version. You might want to do this when you want to use the Scala compiler, `scalac`.
+```
+docker run --rm -it --entrypoint /bin/bash aa8y/scala:2.10
 ```
