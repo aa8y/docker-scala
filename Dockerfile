@@ -1,12 +1,10 @@
-FROM openjdk:8-jdk-alpine
+FROM aa8y/core:jdk8
 
 MAINTAINER Arun Allamsetty <arun.allamsetty@gmail.com>
 
-RUN apk add --no-cache --update bash && \
-    rm -rf /var/cache/apk/*
-
 ARG SCALA_VERSION=2.12.3
 
+USER root
 RUN apk add --no-cache --update wget && \
     mkdir -p /opt/scala/bin && \
     cd /opt && \
@@ -17,5 +15,6 @@ RUN apk add --no-cache --update wget && \
     ln -s /opt/scala/bin/scalac /bin/scalac && \
     apk del --purge wget && \
     rm -rf /var/cache/apk/*
+USER docker
 
 ENTRYPOINT ["/bin/scala"]
