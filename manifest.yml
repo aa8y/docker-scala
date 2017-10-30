@@ -18,7 +18,8 @@ contexts:
         version: 2.11.11
       '2.12.2':
       '2.12.3':
+      '2.12.4':
       '2.12':
-        version: 2.12.3
+        version: 2.12.4
       'latest':
-        version: 2.12.3
+        version: 2.12.4
