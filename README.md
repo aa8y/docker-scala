@@ -1,5 +1,7 @@
 # Docker Scala
 
+[![Build Status](https://travis-ci.org/aa8y/docker-scala.svg?branch=master)](https://travis-ci.org/aa8y/docker-scala)
+
 [Scala](http://www.scala-lang.org/) is a JVM-based programming language which marries the functional and object oriented programming paradigms. It is mainly known for its use in the [Play](https://www.playframework.com/) and [Spark](http://spark.apache.org/) frameworks. This is a Docker image for Scala based on Alpine to get as small an image footprint as possible. Honestly, I don't expect anyone to use this (or any other Scala) image as a base for another image. This image just exists to provide an easy entry into the [Scala REPL](https://docs.scala-lang.org/overviews/repl/overview.html) without having to install it locally.
 
 ## Tags
