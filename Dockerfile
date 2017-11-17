@@ -2,7 +2,7 @@ FROM aa8y/core:jdk8
 
 MAINTAINER Arun Allamsetty <arun.allamsetty@gmail.com>
 
-ARG SCALA_VERSION=2.12.3
+ARG SCALA_VERSION=2.12.4
 
 USER root
 RUN apk add --no-cache --update wget && \

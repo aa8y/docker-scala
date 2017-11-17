@@ -8,8 +8,6 @@ before_install:
   - git clone https://github.com/aa8y/dave.git
 install:
   - npm install -g dave/
-after_install:
-  - rm -rf dave
 before_script:
   - dave build
 script:
