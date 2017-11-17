@@ -1,21 +1,29 @@
-defaults:
-  parameters:
-    repository: aa8y/scala
-  templates:
-    build: docker build -t {repository}:{tag} --build-arg SCALA_VERSION={version} {context}
-    push: docker push {repository}:{tag}
+parameters:
+  entrypoint: /bin/scala
+  repository: aa8y/scala
+templates:
+  build: docker build -t {{{repository}}}:{{tag}} --build-arg SCALA_VERSION={{version}} {{context}}
+  push: docker push {{{repository}}}:{{tag}}
+  test: docker run --rm --entrypoint {{{entrypoint}}} {{{repository}}}:{{tag}} -version
 contexts:
   .:
-    key_name: version
+    tagKeys:
+      - version
     tags:
       '2.10.5':
+        entrypoint: /bin/scalac
       '2.10.6':
+        entrypoint: /bin/scalac
+      '2.10.7':
+        entrypoint: /bin/scalac
       '2.10':
-        version: 2.10.6
+        entrypoint: /bin/scalac
+        version: 2.10.7
       '2.11.8':
       '2.11.11':
+      '2.11.12':
       '2.11':
-        version: 2.11.11
+        version: 2.11.12
       '2.12.2':
       '2.12.3':
       '2.12.4':
