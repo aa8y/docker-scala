@@ -6,7 +6,7 @@
 
 ## Tags
 
-I would guarantee tags for the latest and the previous patch release in a minor release (along with the minor release as a tag). What that means that for the `2.11` minor release, we would have `2.11.8` and `2.11.11` and `2.11` as tags. `latest` will _always_ point to the latest Scala release. See the `manifest.yml` file for more information on the tags.
+I would guarantee tags for the latest and the previous patch release in a minor release (along with the minor release as a tag). What that means that for the `2.11` minor release, we would have `2.11.11` and `2.11.12` and `2.11` as tags. `latest` will _always_ point to the latest Scala release. See the `manifest.yml` file for more information on the tags.
 
 ## Usage
 
