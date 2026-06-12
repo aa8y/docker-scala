@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ "$#" -ne 1 ]; then
+  echo "Usage: $(basename "$0") <tag>" >&2
+  exit 2
+fi
+
+tag="$1"
+image="aa8y/scala:$tag"
+
+# Scala 2.10 images have no working REPL in this build; their entrypoint is scalac.
+case "$tag" in
+  2.10|2.10.*) is_two_ten=1 ;;
+  *)           is_two_ten=0 ;;
+esac
+
+log()   { echo "[$tag] $*"; }
+begin() { log ">> $*"; }
+ok()    { log "   ok: $*"; }
+skip()  { log "   skip: $*"; }
+fail()  { echo "[$tag] FAIL: $1" >&2; exit 1; }
+
+log "=== Testing $image ==="
+
+# 1. Version check
+if [ "$is_two_ten" -eq 1 ]; then
+  entrypoint=/bin/scalac
+else
+  entrypoint=/bin/scala
+fi
+
+begin "version check ($entrypoint -version)"
+version_out=$(docker run --rm --entrypoint "$entrypoint" "$image" -version 2>&1) \
+  || fail "$entrypoint -version exited non-zero: $version_out"
+
+if [[ "$tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echo "$version_out" | grep -qF "$tag" \
+    || fail "expected version $tag in output: $version_out"
+else
+  echo "$version_out" | grep -qE '[0-9]+\.[0-9]+\.[0-9]+' \
+    || fail "no version number in output: $version_out"
+fi
+ok "version check ($(echo "$version_out" | tr -d '\r' | head -n1))"
+
+# 2. REPL eval (skipped for 2.10)
+begin "REPL eval"
+if [ "$is_two_ten" -eq 1 ]; then
+  skip "REPL eval (2.10 image has no REPL entrypoint)"
+else
+  repl_out=$(echo 'List(1,2,3).sum' | docker run -i --rm "$image" 2>&1) \
+    || fail "REPL exited non-zero: $repl_out"
+  echo "$repl_out" | grep -qE 'Int = 6' \
+    || fail "REPL did not evaluate List(1,2,3).sum to 6: $repl_out"
+  ok "REPL eval (List(1,2,3).sum => 6)"
+fi
+
+# 3. Compile + run round-trip
+begin "compile + run round-trip"
+host_scratch=$(mktemp -d -t "docker-scala-test.${tag}.XXXXXX")
+trap 'rm -rf "$host_scratch"' EXIT
+container_scratch=/tmp/docker-scala-test
+
+cat > "$host_scratch/Hello.scala" <<'EOF'
+object Hello extends App {
+  println("hello-from-docker-scala-test")
+}
+EOF
+chmod -R a+rwX "$host_scratch"
+
+compile_out=$(docker run --rm \
+  --entrypoint /bin/sh \
+  -v "$host_scratch:$container_scratch" \
+  -w "$container_scratch" \
+  "$image" \
+  -c 'scalac Hello.scala && scala Hello' 2>&1) \
+  || fail "compile+run exited non-zero: $compile_out"
+
+echo "$compile_out" | grep -qF 'hello-from-docker-scala-test' \
+  || fail "compile+run did not produce expected output: $compile_out"
+ok "compile + run round-trip"
+
+log "=== PASS $image ==="

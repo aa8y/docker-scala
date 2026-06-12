@@ -4,7 +4,7 @@ parameters:
 templates:
   build: docker build -t {{{repository}}}:{{tag}} --build-arg SCALA_VERSION={{version}} {{context}}
   push: docker push {{{repository}}}:{{tag}}
-  test: docker run --rm --entrypoint {{{entrypoint}}} {{{repository}}}:{{tag}} -version
+  test: ./script/test {{tag}}
 contexts:
   .:
     tagKeys:
