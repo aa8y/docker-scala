@@ -10,7 +10,7 @@ on:
       - '**/*.md'
 
 env:
-  DAVE_VERSION: 0.2.2
+  DAVE_VERSION: 0.3.1
 
 jobs:
   build:
