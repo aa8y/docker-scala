@@ -1,0 +1,15 @@
+schemaVersion: "2.0.0"
+
+# Applied to tags whose `scalac -version` writes the banner to stderr.
+# The stream has flip-flopped across Scala history: 2.10/2.11 use stderr,
+# 2.12/2.13 moved it to stdout (see version-stdout.yaml), 3.3 moved it back
+# to stderr, and 3.8 moved it back to stdout. We pin each minor to the
+# observed stream and let the excludedOutput clause catch a future flip so
+# we can re-pin the tag in manifest.yml.
+
+commandTests:
+  - name: "scalac -version writes the banner to stderr"
+    command: "scalac"
+    args: ["-version"]
+    expectedError: ["version [23]\\.[0-9]+\\.[0-9]+"]
+    excludedOutput: ["version [23]\\."]

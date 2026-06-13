@@ -3,9 +3,15 @@ schemaVersion: "2.0.0"
 # Applied to tags whose entrypoint is the Scala runner (`scala`). 2.10 skips
 # this — its REPL is broken in this build, which is why its entrypoint is
 # scalac.
+#
+# Scala 3's REPL colorizes output by default (`\e[35mInt\e[0m = \e[31m6\e[0m`),
+# so we strip ANSI escapes before matching. Scala 2's REPL doesn't colorize,
+# so the strip is a no-op there.
 
 commandTests:
   - name: "REPL evaluates List(1,2,3).sum to 6"
     command: "sh"
-    args: ["-c", "echo 'List(1,2,3).sum' | scala"]
+    args:
+      - "-c"
+      - "echo 'List(1,2,3).sum' | scala 2>&1 | tr -d '\\033' | sed 's/\\[[0-9;]*m//g'"
     expectedOutput: ["Int = 6"]

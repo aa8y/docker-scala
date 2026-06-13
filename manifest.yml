@@ -1,7 +1,7 @@
 parameters:
   repository: aa8y/scala
 templates:
-  build: docker build -t {{{repository}}}:{{tag}} --build-arg SCALA_VERSION={{version}} --build-arg SCALA_BIN={{scalaBin}} {{{context}}}
+  build: docker build -t {{{repository}}}:{{tag}} --build-arg JDK_VERSION={{jdk}} --build-arg SCALA_VERSION={{version}} --build-arg SCALA_BIN={{scalaBin}} {{{context}}}
   push: docker push {{{repository}}}:{{tag}}
 structureTest:
   configs:
@@ -11,22 +11,64 @@ contexts:
     tags:
       '2.10':
         version: 2.10.7
+        jdk: '8'
         scalaBin: scalac
+        structureTest:
+          configs:
+            - test/config/version-stderr.yaml
       '2.11':
         version: 2.11.12
+        jdk: '8'
         scalaBin: scala
         structureTest:
           configs:
             - test/config/repl.yaml
+            - test/config/version-stderr.yaml
       '2.12':
-        version: 2.12.8
+        version: 2.12.21
+        jdk: '21'
         scalaBin: scala
         structureTest:
           configs:
             - test/config/repl.yaml
+            - test/config/version-stdout.yaml
+      '2.13':
+        version: 2.13.18
+        jdk: '21'
+        scalaBin: scala
+        structureTest:
+          configs:
+            - test/config/repl.yaml
+            - test/config/version-stdout.yaml
+      '3.3':
+        version: 3.3.8
+        jdk: '21'
+        scalaBin: scala
+        structureTest:
+          configs:
+            - test/config/repl.yaml
+            - test/config/version-stderr.yaml
+      '3.8':
+        version: 3.8.4
+        jdk: '21'
+        scalaBin: scala
+        structureTest:
+          configs:
+            - test/config/repl.yaml
+            - test/config/version-stdout.yaml
+      lts:
+        version: 3.3.8
+        jdk: '21'
+        scalaBin: scala
+        structureTest:
+          configs:
+            - test/config/repl.yaml
+            - test/config/version-stderr.yaml
       latest:
-        version: 2.12.8
+        version: 3.8.4
+        jdk: '21'
         scalaBin: scala
         structureTest:
           configs:
             - test/config/repl.yaml
+            - test/config/version-stdout.yaml

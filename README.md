@@ -6,16 +6,24 @@
 
 ## Tags
 
-Only minor-release tags are published. `latest` tracks the newest minor.
+Only the latest patch release of each supported minor line is published.
+`latest` tracks the newest stable; `lts` tracks the current LTS line.
 
-| Tag      | Scala version | Entrypoint    |
-|----------|---------------|---------------|
-| `2.10`   | 2.10.7        | `/bin/scalac` |
-| `2.11`   | 2.11.12       | `/bin/scala`  |
-| `2.12`   | 2.12.8        | `/bin/scala`  |
-| `latest` | 2.12.8        | `/bin/scala`  |
+| Tag      | Scala version | JDK   | Entrypoint    |
+|----------|---------------|-------|---------------|
+| `2.10`   | 2.10.7        | 8     | `/bin/scalac` |
+| `2.11`   | 2.11.12       | 8     | `/bin/scala`  |
+| `2.12`   | 2.12.21       | 21    | `/bin/scala`  |
+| `2.13`   | 2.13.18       | 21    | `/bin/scala`  |
+| `3.3`    | 3.3.8         | 21    | `/bin/scala`  |
+| `3.8`    | 3.8.4         | 21    | `/bin/scala`  |
+| `lts`    | 3.3.8         | 21    | `/bin/scala`  |
+| `latest` | 3.8.4         | 21    | `/bin/scala`  |
 
-The `2.10` image's entrypoint is `scalac` because the REPL is broken in that build. See `manifest.yml` for the full matrix.
+Scala 2.10 and 2.11 are pinned to JDK 8 because those Scala versions predate
+the JDK 9 module system and don't run on newer JDKs. The `2.10` image's
+entrypoint is `scalac` because the REPL is broken in that build. See
+`manifest.yml` for the full matrix.
 
 ## Usage
 
