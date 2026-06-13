@@ -1,29 +1,32 @@
 parameters:
-  entrypoint: /bin/scala
   repository: aa8y/scala
 templates:
-  build: docker build -t {{{repository}}}:{{tag}} --build-arg SCALA_VERSION={{version}} {{context}}
+  build: docker build -t {{{repository}}}:{{tag}} --build-arg SCALA_VERSION={{version}} --build-arg SCALA_BIN={{scalaBin}} {{{context}}}
   push: docker push {{{repository}}}:{{tag}}
-  test: ./script/test {{tag}}
+structureTest:
+  configs:
+    - test/config/common.yaml
 contexts:
   .:
-    tagKeys:
-      - version
     tags:
-      '2.10.6':
-        entrypoint: /bin/scalac
-      '2.10.7':
-        entrypoint: /bin/scalac
       '2.10':
-        entrypoint: /bin/scalac
         version: 2.10.7
-      '2.11.11':
-      '2.11.12':
+        scalaBin: scalac
       '2.11':
         version: 2.11.12
-      '2.12.7':
-      '2.12.8':
+        scalaBin: scala
+        structureTest:
+          configs:
+            - test/config/repl.yaml
       '2.12':
         version: 2.12.8
-      'latest':
+        scalaBin: scala
+        structureTest:
+          configs:
+            - test/config/repl.yaml
+      latest:
         version: 2.12.8
+        scalaBin: scala
+        structureTest:
+          configs:
+            - test/config/repl.yaml

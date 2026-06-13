@@ -6,7 +6,16 @@
 
 ## Tags
 
-I would guarantee tags for the latest and the previous patch release in a minor release (along with the minor release as a tag). What that means that for the `2.11` minor release, we would have `2.11.11` and `2.11.12` and `2.11` as tags. `latest` will _always_ point to the latest Scala release. See the `manifest.yml` file for more information on the tags.
+Only minor-release tags are published. `latest` tracks the newest minor.
+
+| Tag      | Scala version | Entrypoint    |
+|----------|---------------|---------------|
+| `2.10`   | 2.10.7        | `/bin/scalac` |
+| `2.11`   | 2.11.12       | `/bin/scala`  |
+| `2.12`   | 2.12.8        | `/bin/scala`  |
+| `latest` | 2.12.8        | `/bin/scala`  |
+
+The `2.10` image's entrypoint is `scalac` because the REPL is broken in that build. See `manifest.yml` for the full matrix.
 
 ## Usage
 
@@ -14,11 +23,29 @@ You can run the REPL for the _latest_ Scala version using.
 ```
 docker run --rm -it aa8y/scala
 ```
-For an older/specific version use.
+For an older/specific minor use.
 ```
-docker run --rm -it aa8y/scala:2.11.11
+docker run --rm -it aa8y/scala:2.11
 ```
 For running an interactive shell within the container, use this command and specify the required version. You might want to do this when you want to use the Scala compiler, `scalac`.
 ```
 docker run --rm -it --entrypoint /bin/bash aa8y/scala:2.10
 ```
+
+## Testing
+
+Image tests are defined as [container-structure-test][cst] configs under
+`test/config/` — a shared `common.yaml` plus one file per minor version. The
+configs to apply per tag are declared in `manifest.yml` under `structureTest:`
+and run natively by `dave structure-test`:
+
+```sh
+brew install container-structure-test     # one-time
+
+dave build
+dave structure-test
+```
+
+CI runs the same commands; see `.github/workflows/ci.yml`.
+
+[cst]: https://github.com/GoogleContainerTools/container-structure-test

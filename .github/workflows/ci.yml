@@ -10,7 +10,8 @@ on:
       - '**/*.md'
 
 env:
-  DAVE_VERSION: 0.3.1
+  CST_VERSION: 1.22.1
+  DAVE_VERSION: 0.4.0
 
 jobs:
   build:
@@ -25,11 +26,18 @@ jobs:
       - name: Install dave
         run: npm install -g dave@"$DAVE_VERSION"
 
+      - name: Install container-structure-test
+        run: |
+          curl -fsSL -o /tmp/cst \
+            "https://github.com/GoogleContainerTools/container-structure-test/releases/download/v${CST_VERSION}/container-structure-test-linux-amd64"
+          chmod +x /tmp/cst
+          sudo mv /tmp/cst /usr/local/bin/container-structure-test
+
       - name: Build images
         run: dave build
 
       - name: Test images
-        run: dave test
+        run: dave structure-test
 
       - name: Log in to Docker Hub
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'

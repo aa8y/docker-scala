@@ -1,0 +1,11 @@
+schemaVersion: "2.0.0"
+
+# Applied to tags whose entrypoint is the Scala runner (`scala`). 2.10 skips
+# this — its REPL is broken in this build, which is why its entrypoint is
+# scalac.
+
+commandTests:
+  - name: "REPL evaluates List(1,2,3).sum to 6"
+    command: "sh"
+    args: ["-c", "echo 'List(1,2,3).sum' | scala"]
+    expectedOutput: ["Int = 6"]

@@ -1,0 +1,45 @@
+schemaVersion: "2.0.0"
+
+# Shared assertions for every aa8y/scala image: install layout, the
+# build-arg-driven entrypoint wrapper, a scalac compile+run round-trip
+# (which works on every supported minor, including 2.10 where the REPL is
+# broken), and a loose version check.
+
+metadataTest:
+  entrypoint: ["/usr/local/bin/scala-entrypoint"]
+
+fileExistenceTests:
+  - name: "/opt/scala/bin/scala exists"
+    path: "/opt/scala/bin/scala"
+    shouldExist: true
+  - name: "/opt/scala/bin/scalac exists"
+    path: "/opt/scala/bin/scalac"
+    shouldExist: true
+  - name: "/bin/scala symlink exists"
+    path: "/bin/scala"
+    shouldExist: true
+  - name: "/bin/scalac symlink exists"
+    path: "/bin/scalac"
+    shouldExist: true
+  - name: "entrypoint wrapper exists"
+    path: "/usr/local/bin/scala-entrypoint"
+    shouldExist: true
+
+commandTests:
+  - name: "compile and run a Hello object with scalac"
+    command: "sh"
+    args:
+      - "-c"
+      - 'cd "$(mktemp -d)" && printf ''object Hello extends App { println("ok") }'' > Hello.scala && scalac Hello.scala && scala Hello'
+    expectedOutput: ["^ok"]
+
+  - name: "scalac reports a Scala 2.x version"
+    # scala/scalac -version goes to stderr on 2.10/2.11 but stdout on 2.12, so merge streams.
+    command: "sh"
+    args: ["-c", "scalac -version 2>&1"]
+    expectedOutput: ["version 2\\.[0-9]+\\.[0-9]+"]
+
+  - name: "entrypoint wrapper resolves to scala or scalac"
+    command: "sh"
+    args: ["-c", "readlink /usr/local/bin/scala-entrypoint"]
+    expectedOutput: ["(?m)^/opt/scala/bin/scalac?$"]
